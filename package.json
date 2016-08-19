@@ -1,5 +1,5 @@
 {
-  "name": "roon-api-settings",
+  "name": "node-roon-api-settings",
   "version": "1.0.0",
   "description": "Roon Api Settings Service (com.roonlabs.settings:1)",
   "main": "lib.js",

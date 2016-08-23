@@ -7,13 +7,17 @@ function RoonApiSettings(roon, opts) {
                 subscribe_name:   "subscribe_settings",
                 unsubscribe_name: "unsubscribe_settings",
                 start: (req) => {
-                    req.send_continue("Subscribed", { settings: this._settings, layout: this._layout });
+		    opts.get_settings((s,l) => {
+			req.send_continue("Subscribed", { settings: s, layout: l })
+		    });
                 }
             },
         ],
         methods: {
             get_settings: function(req) {
-                req.send_complete("Success", { settings: this._settings, layout: this._layout });
+		opts.get_settings((s,l) => {
+		    req.send_complete("Success", { settings: s, layout: l });
+		});
             },
             save_settings: function(req) {
                 opts.save_settings(req, req.body.is_dry_run, req.body.settings);
@@ -25,15 +29,11 @@ function RoonApiSettings(roon, opts) {
     });
 
     this.services  = [ this._svc ];
-    this._settings = {};
-    this._layout   = [];
 };
 
 
-RoonApiSettings.prototype.set_settings = function (settings, layout) {
-    this._settings = settings;
-    this._layout   = layout;
-    this._svc.send_continue_all('subscribe_settings', "Changed", { settings: this._settings, layout: this._layout });
+RoonApiSettings.prototype.update_settings = function (settings, layout) {
+    this._svc.send_continue_all('subscribe_settings', "Changed", { settings: settings, layout: layout });
 };
 
 exports = module.exports = RoonApiSettings;
